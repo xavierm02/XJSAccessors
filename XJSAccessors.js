@@ -1,6 +1,10 @@
 ( function ( ) {
     var undefined;
     
+    function toArray( array ) {
+        return [ ].slice.call( array );
+    }
+    
     function XJSAccessors( object ) {
         this.object = object;
         var storage = this.storage = Object.create( object );
@@ -11,13 +15,13 @@
         var that = this;
         
         object.get = function ( name ) {
-            return that.hasGetter( name ) ? that.getGetter( name )( name, object ) : storage[ name ];
+            return that.hasGetter( name ) ? that.getGetter( name ).apply( object, arguments ) : storage[ name ];
         };
         object.set = function ( name, value ) {
             if ( that.getIsProtected( name ) ) {
                 throw new Error( name + ' is a protected property and therefore can not have its value set!' );
             } else {
-                return storage[ name ] = that.hasSetter( name ) ? that.getSetter( name )( value, name, object ) : value;
+                return storage[ name ] = that.hasSetter( name ) ? that.getSetter( name ).apply( object, arguments ) : value;
             }
         };
         object.forIn = function( callback, that ) {
