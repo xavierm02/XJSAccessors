@@ -15,7 +15,7 @@
         };
         object.set = function ( name, value ) {
             if ( that.getIsProtected( name ) ) {
-                throw new Error( name + ' is a protected property!' );
+                throw new Error( name + ' is a protected property and therefore can not have its value set!' );
             } else {
                 return storage[ name ] = that.hasSetter( name ) ? that.getSetter( name )( value, name, object ) : value;
             }
@@ -62,7 +62,7 @@
     XJSAccessorsPrototype.setSetter = function ( name, value ) {
         if ( typeof value === 'function' ) {
             if ( this.getIsProtected( name ) ) {
-                throw new Error( name + ' is protected and therefore can not have a setter!' );
+                throw new Error( name + ' is a protected property and therefore can not have a setter!' );
             } else {
                 return this.setters[ name ] = value;
             }
