@@ -61,7 +61,7 @@
                 }
             }
         ] );
-        if ( ! selection.hasOwnProperty( 'rangeCount' ) ) {
+        if ( selection.rangeCount === undefined ) {
             accessors.setGetter( 'rangeCount', function ( ) {
                 if ( typeof selection.createRangeCollection === 'function' ) {
                     return selection.createRangeCollection( ).length;
