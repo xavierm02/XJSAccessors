@@ -5,9 +5,12 @@
         return [ ].slice.call( array );
     }
     
-    function XJSAccessors( object ) {
+    function XJSAccessors( object, parentStorage ) {
+        if ( arguments.length < 2 ) {
+            parentStorage = object;
+        }
         this.object = object;
-        var storage = this.storage = Object.create( object );
+        var storage = this.storage = Object.create( parentStorage );
         var getters = this.getters = { };
         var setters = this.setters = { };
         var isProtected = this.isProtected = { };
