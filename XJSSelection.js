@@ -56,7 +56,7 @@
         ] );
         if ( selection.rangeCount === undefined ) {
             accessors.setGetter( 'rangeCount', function ( ) {
-                if ( typeof selection.createRangeCollection === 'function' ) {
+                if ( selection.createRangeCollection !== undefined ) {
                     return selection.createRangeCollection( ).length;
                 } else {
                     throw new Error( 'Your JavaScript implementation does not support "Selection.rangeCount".' );
