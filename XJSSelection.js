@@ -23,7 +23,7 @@
         } else {
             throw new Error( 'Your JavaScript implementation does not support "window.getSelection".' );
         }
-        var accessors = new XJSAccessors( this );
+        var accessors = new XJSAccessors( this, selection );
         accessors.defineProperties( [
             {
                 name: 'selection',
@@ -52,13 +52,6 @@
                     }
                     return new XJSRange( window, range );
                 }
-            },
-            {
-                name: 'rangeCount',
-                isProtected: true,
-                getter: function ( ) {
-                    return selection.rangeCount;
-                }
             }
         ] );
         if ( selection.rangeCount === undefined ) {
@@ -73,7 +66,7 @@
     }
     
     function XJSRange( window, range ) {
-        new XJSAccessors( this ).defineProperties( [
+        new XJSAccessors( this, range ).defineProperties( [
             {
                 name: 'range',
                 value: range
