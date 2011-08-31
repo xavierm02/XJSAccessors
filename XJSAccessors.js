@@ -31,11 +31,13 @@
             return accessors.getIsProtected( name );
         };
         object.forIn = function( callback, that ) {
-            if ( argument.length < 2 ) {
+            if ( arguments.length < 2 ) {
                 that = this;
             }
-            for ( var name in this ) {
-                callback.call( that, this.get( name ), name, this );
+            for ( var name in storage ) {
+                if ( storage.hasOwnProperty( name ) ) {
+                    callback.call( that, this.get( name ), name, this );
+                }
             }
         };
     }
