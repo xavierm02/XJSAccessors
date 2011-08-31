@@ -27,6 +27,9 @@
                 return storage[ name ] = that.hasSetter( name ) ? that.getSetter( name ).apply( object, arguments ) : value;
             }
         };
+        object.isProtected = function ( name ) {
+            return that.getIsProtected( name );
+        };
         object.forIn = function( callback, that ) {
             if ( argument.length < 2 ) {
                 that = this;
@@ -120,7 +123,7 @@
     XJSAccessorsPrototype.unprotect = function ( name ) {
         return delete this.isProtected[ name ];
     };
-    XJSAccessorsPrototype.getIsProtected = function ( name ) {
+    XJSAccessorsPrototype.getIsProtected = function ( name ) {console.log(this.isProtected)
         return this.isProtected.hasOwnProperty( name );
     };
     XJSAccessorsPrototype.setIsProtected = function ( name, isProtected ) {
