@@ -5,6 +5,32 @@
         return [ ].slice.call( array );
     }
     
+    // <test>
+    function XJSProperty( p ) {
+        if ( typeof p !== 'object' || ! p ) {
+            throw new Error( 'defineProperty\'s parameter needs to be an object!' );
+        } else if ( ! p.hasOwnProperty( 'name' ) ) {
+            throw new Error( 'defineProperty\'s parameter needs a name property!' );
+        } else {
+            var name = p.name + '';
+            this.name = name;
+            if ( p.hasOwnProperty( 'value' ) ) {
+                this.value = p.value;
+            }
+            if ( p.hasOwnProperty( 'getter' ) ) {
+                this.getter = p.getter;
+            }
+            if ( p.hasOwnProperty( 'setter' ) ) {
+                this.setter = p.setter;
+            }
+            // need isProtected
+        }
+    }
+    XJSProperty.prototype = {
+        value: undefined
+    };
+    // </test>
+    
     function XJSAccessors( object, parentStorage ) {
         if ( arguments.length < 2 ) {
             parentStorage = object;
