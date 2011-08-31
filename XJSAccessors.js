@@ -25,9 +25,6 @@
             // need isProtected
         }
     }
-    XJSProperty.prototype = {
-        value: undefined
-    };
     
     function XJSAccessors( object, parentStorage ) {
         if ( arguments.length < 2 ) {
@@ -72,14 +69,28 @@
     
     var XJSAccessorsPrototype = XJSAccessors.prototype;
     XJSAccessorsPrototype.defineProperty = function ( p ) {
-        var property = new XJSProperty( p );
-        this.properties[ property.name ] = property;
+        this.addProperty( new XJSProperty( p ) );
     };
     
     XJSAccessorsPrototype.defineProperties = function ( properties ) {
         properties.forEach( function ( property ) {
             this.defineProperty( property );
         }, this );
+    };
+    
+    XJSAccessorsPrototype.addProperty = function ( property ) {
+        this.setProperty( property.name, property );
+    };
+    XJSAccessorsPrototype.getProperty = function ( name ) {
+        var properties = this.properties;
+        if ( properties.hasOwnProperty( name ) ) {
+            return properties[ name ];
+        } else {
+            return properties[ name ] = { };
+        }
+    };
+    XJSAccessorsPrototype.setProperty = function ( name, property ) {
+        this.properties[ name ] = property;
     };
     
     this.XJSAccessors = XJSAccessors;
