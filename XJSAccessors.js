@@ -5,7 +5,6 @@
         return [ ].slice.call( array );
     }
     
-    // <test>
     function XJSProperty( p ) {
         if ( typeof p !== 'object' || ! p ) {
             throw new Error( 'defineProperty\'s parameter needs to be an object!' );
@@ -29,137 +28,58 @@
     XJSProperty.prototype = {
         value: undefined
     };
-    // </test>
     
     function XJSAccessors( object, parentStorage ) {
         if ( arguments.length < 2 ) {
             parentStorage = object;
         }
+        this.parentStorage = parentStorage;
         this.object = object;
-        var storage = this.storage = Object.create( parentStorage );
-        var getters = this.getters = { };
-        var setters = this.setters = { };
-        var isProtected = this.isProtected = { };
+        
+        var properties = this.properties = { };
         
         var accessors = this;
         
         object.get = function ( name ) {
-            return accessors.hasGetter( name ) ? accessors.getGetter( name ).apply( object, arguments ) : storage[ name ];
+            if ( properties.hasOwnProperty( name ) ) {
+                var property = properties[ name ];
+                if ( property.hasOwnProperty( 'getter' ) ) {
+                    return property.getter.apply( this, arguments );
+                } else if ( property.hasOwnProperty( 'value' ) ) {
+                    return property.value;
+                }
+            }
+            return parentStorage[ name ];
         };
         object.set = function ( name, value ) {
-            if ( accessors.getIsProtected( name ) ) {
-                throw new Error( name + ' is a protected property and therefore can not have its value set!' );
-            } else {
-                return storage[ name ] = accessors.hasSetter( name ) ? accessors.getSetter( name ).apply( object, arguments ) : value;
-            }
-        };
-        object.isProtected = function ( name ) {
-            return accessors.getIsProtected( name );
-        };
-        object.forIn = function( callback, that ) {
-            if ( arguments.length < 2 ) {
-                that = this;
-            }
-            for ( var name in storage ) {
-                if ( storage.hasOwnProperty( name ) ) {
-                    callback.call( that, this.get( name ), name, this );
+            // need isProtected
+            var property;
+            if ( properties.hasOwnProperty( name ) ) {
+                property = properties[ name ];
+                if ( property.hasOwnProperty( 'setter' ) ) {
+                    return property.value = property.settter.apply( this, arguments );
+                } else {
+                    return property.value = value;
                 }
+            } else {
+                properties[ name ] = {
+                    value: value
+                };
+                return value;
             }
         };
     }
     
     var XJSAccessorsPrototype = XJSAccessors.prototype;
-    
-    XJSAccessorsPrototype.get = function ( name ) {
-        return this.storage[ name ];
-    };
-    XJSAccessorsPrototype.set = function ( name, value ) {
-        return this.storage[ name ] = value;
-    };
-    
-    XJSAccessorsPrototype.getGetter = function ( name ) {
-        return this.getters[ name ];
-    };
-    XJSAccessorsPrototype.setGetter = function ( name, value ) {
-        if ( typeof value === 'function' ) {
-            return this.getters[ name ] = value;
-        } else {
-            throw new Error( 'Getter given for ' + name + ' must be a function!' );
-        }
-    };
-    XJSAccessorsPrototype.deleteGetter = function ( name ) {
-        return delete this.getters[ name ];
-    };
-    XJSAccessorsPrototype.hasGetter = function ( name ) {
-        return this.getters.hasOwnProperty( name );
-    };
-    
-    XJSAccessorsPrototype.getSetter = function ( name ) {
-        return this.setters[ name ];
-    };
-    XJSAccessorsPrototype.setSetter = function ( name, value ) {
-        if ( typeof value === 'function' ) {
-            if ( this.getIsProtected( name ) ) {
-                throw new Error( name + ' is a protected property and therefore can not have a setter!' );
-            } else {
-                return this.setters[ name ] = value;
-            }
-        } else {
-            throw new Error( 'Setter given for ' + name + ' must be a function!' );
-        }
-    };
-    XJSAccessorsPrototype.deleteSetter = function ( name ) {
-        return delete this.setters[ name ];
-    };
-    XJSAccessorsPrototype.hasSetter = function ( name ) {
-        return this.setters.hasOwnProperty( name );
-    };
-    
     XJSAccessorsPrototype.defineProperty = function ( p ) {
-        if ( ! p.hasOwnProperty( 'name' ) ) {
-            throw new Error( 'defineProperty\'s parameter needs a name property!' );
-        } else {
-            var name = p.name + '';
-            if ( p.hasOwnProperty( 'value' ) ) {
-                this.set( name, p.value );
-            }
-            if ( p.hasOwnProperty( 'getter' ) ) {
-                this.setGetter( name, p.getter );
-            }
-            if ( p.hasOwnProperty( 'setter' ) ) {
-                this.setSetter( name, p.setter );
-            }
-            if ( p.hasOwnProperty( 'isProtected' ) ) {
-                this.setIsProtected( name, p.isProtected );
-            }
-        }
+        var property = new XJSProperty( p );
+        this.properties[ property.name ] = property;
     };
     
     XJSAccessorsPrototype.defineProperties = function ( properties ) {
         properties.forEach( function ( property ) {
             this.defineProperty( property );
         }, this );
-    };
-    
-    XJSAccessorsPrototype.protect = function ( name ) {
-        if ( this.hasSetter( name ) ) {
-            throw new Error( name + ' has a setter and therefore can not be protected!' );
-        } else {
-            return this.isProtected[ name ] = true;
-        }
-    };
-    XJSAccessorsPrototype.unprotect = function ( name ) {
-        return delete this.isProtected[ name ];
-    };
-    XJSAccessorsPrototype.getIsProtected = function ( name ) {
-        return this.isProtected.hasOwnProperty( name );
-    };
-    XJSAccessorsPrototype.setIsProtected = function ( name, isProtected ) {
-        if ( isProtected ) {
-            this.protect( name );
-        } else {
-            this.unprotect( name );
-        }
     };
     
     this.XJSAccessors = XJSAccessors;
