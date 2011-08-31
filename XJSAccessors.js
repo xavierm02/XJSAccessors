@@ -15,20 +15,20 @@
         var setters = this.setters = { };
         var isProtected = this.isProtected = { };
         
-        var that = this;
+        var accessors = this;
         
         object.get = function ( name ) {
-            return that.hasGetter( name ) ? that.getGetter( name ).apply( object, arguments ) : storage[ name ];
+            return accessors.hasGetter( name ) ? accessors.getGetter( name ).apply( object, arguments ) : storage[ name ];
         };
         object.set = function ( name, value ) {
-            if ( that.getIsProtected( name ) ) {
+            if ( accessors.getIsProtected( name ) ) {
                 throw new Error( name + ' is a protected property and therefore can not have its value set!' );
             } else {
-                return storage[ name ] = that.hasSetter( name ) ? that.getSetter( name ).apply( object, arguments ) : value;
+                return storage[ name ] = accessors.hasSetter( name ) ? accessors.getSetter( name ).apply( object, arguments ) : value;
             }
         };
         object.isProtected = function ( name ) {
-            return that.getIsProtected( name );
+            return accessors.getIsProtected( name );
         };
         object.forIn = function( callback, that ) {
             if ( argument.length < 2 ) {
