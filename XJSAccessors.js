@@ -123,7 +123,7 @@
     XJSAccessorsPrototype.unprotect = function ( name ) {
         return delete this.isProtected[ name ];
     };
-    XJSAccessorsPrototype.getIsProtected = function ( name ) {console.log(this.isProtected)
+    XJSAccessorsPrototype.getIsProtected = function ( name ) {
         return this.isProtected.hasOwnProperty( name );
     };
     XJSAccessorsPrototype.setIsProtected = function ( name, isProtected ) {
