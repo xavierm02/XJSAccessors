@@ -52,6 +52,10 @@
                     }
                     return new XJSRange( window, range );
                 }
+            },
+            {
+                name: 'rangeCount',
+                isProtected: true
             }
         ] );
         if ( selection.rangeCount === undefined ) {
